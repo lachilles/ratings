@@ -44,7 +44,7 @@ def load_movies():
     # we won't be trying to add duplicate users
     Movie.query.delete()
 
-    # Read u.user file and insert data
+    # Read u.item file and insert data
     for row in open("seed_data/u.item"):
         row = row.rstrip()
         movie_info = row.split("|")
@@ -55,12 +55,8 @@ def load_movies():
         imdb_url = movie_info[4]
 
         #Removing the year from title
-        #Below is incomplete on Day 1 EOD
-    for title in movie_info[1]:
-        title = row.split("(")
-        title = title_yr[0]
-
-        import pdb; pdb.set_trace()
+        title_split = title_yr.rsplit("(", 1)
+        title = title_split[0].rstrip() 
 
         released_str = released_at
 
@@ -69,8 +65,9 @@ def load_movies():
         else:
             released_at = None
         
+
         movie = Movie(movie_id=movie_id,
-                    title_yr=title_yr,
+                    title=title,
                     released_at=released_at,
                     imdb_url=imdb_url)
 
@@ -83,6 +80,30 @@ def load_movies():
 
 def load_ratings():
     """Load ratings from u.data into database."""
+    
+    print "Ratings"
+
+    # Delete all rows in table, so if we need to run this a second time,
+    # we won't be trying to add duplicate users
+    Rating.query.delete()
+
+
+    for row in open("seed_data/u.data"):
+        row = row.rstrip()
+        rating_info = row.split("\t")
+
+        user_id = rating_info[0]
+        movie_id = rating_info[1]
+        score = rating_info[2]
+
+        rating = Rating(user_id=user_id,
+                        movie_id=movie_id,
+                        score=score)
+
+
+        db.session.add(rating)
+
+    db.session.commit()
 
 
 def set_val_user_id():

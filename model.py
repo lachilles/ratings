@@ -36,9 +36,9 @@ class Movie(db.Model):
     __tablename__ = "movies"
 
     movie_id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(64), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
     released_at = db.Column(db.DateTime, nullable=True)
-    imdb_url = db.Column(db.String(64), nullable=True)
+    imdb_url = db.Column(db.String(200), nullable=True)
 
 
 class Rating(db.Model):
@@ -46,10 +46,11 @@ class Rating(db.Model):
 
     __tablename__ = "ratings"
 
-    rating_id = db.Column(db.Integer, primary_key=True)
+    rating_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     movie_id = db.Column(db.Integer)
     user_id = db.Column(db.Integer)
     score = db.Column(db.Integer)
+
 
 
 
