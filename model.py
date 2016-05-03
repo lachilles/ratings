@@ -23,6 +23,10 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     zipcode = db.Column(db.String(15), nullable=True)
 
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<User user_id=%s email=%s>" % (self.user_id, self.email)
 
 # Put your Movie and Rating model classes here.
 
@@ -61,6 +65,10 @@ def connect_to_db(app):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///ratings'
     db.app = app
     db.init_app(app)
+
+
+
+
 
 
 if __name__ == "__main__":
