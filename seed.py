@@ -51,14 +51,14 @@ def load_movies():
 
         movie_id = movie_info[0]
         title_yr = movie_info[1]
-        released_at = movie_info[2]
+        released_str = movie_info[2]
         imdb_url = movie_info[4]
 
         #Removing the year from title
         title_split = title_yr.rsplit("(", 1)
         title = title_split[0].rstrip() 
+        title = title.decode("latin-1")
 
-        released_str = released_at
 
         if released_str:
             released_at = datetime.datetime.strptime(released_str, "%d-%b-%Y")
@@ -92,9 +92,9 @@ def load_ratings():
         row = row.rstrip()
         rating_info = row.split("\t")
 
-        user_id = rating_info[0]
-        movie_id = rating_info[1]
-        score = rating_info[2]
+        user_id = int(rating_info[0])
+        movie_id = int(rating_info[1])
+        score = int(rating_info[2])
 
         rating = Rating(user_id=user_id,
                         movie_id=movie_id,
