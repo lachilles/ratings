@@ -31,12 +31,25 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
-@app.route("/login")
+@app.route("/login", methods=["POST"])
 def login_form():
     """User login"""
 
-##Create new template where user will login. We are on Adding New Users in the instructions
+    error = None
 
+    # Returns a list of tuples of user's email and password.
+    users_emails_pws = db.session.query(User.email, User.password).all()
+
+    # Need to work on conditional statment to check if user email and pw match. If they match, then flash the Success message.
+    if request.form.get("inputEmail") in users_email:
+        
+
+        flash("Successfully logged in!")
+
+
+
+
+    return render_template("login.html")
 
 
 
