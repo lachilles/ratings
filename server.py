@@ -31,25 +31,50 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
-@app.route("/login", methods=["POST"])
+@app.route("/login-form", methods=["GET"])
 def login_form():
     """User login"""
-
-    error = None
-
-    # Returns a list of tuples of user's email and password.
-    users_emails_pws = db.session.query(User.email, User.password).all()
-
-    # Need to work on conditional statment to check if user email and pw match. If they match, then flash the Success message.
-    if request.form.get("inputEmail") in users_email:
-        
-
-        flash("Successfully logged in!")
-
-
-
-
     return render_template("login.html")
+
+@app.route("/login", methods=["POST"])
+def login_process():
+    """Process login"""
+
+    email = request.form.get("email")
+    pw = request.form.get("password")
+    # error = None
+
+    # Returns a single User object querying by email.
+    user = db.session.query(User).filter(User.email==email).one()
+
+    # input_email_pw = (request.args.get("inputEmail"), request.args.get("inputPassword"))
+    
+    print "EMAIL", request.form.get("email")
+    print "*************", pw
+
+    # if user_email: 
+    #     user_pw = db.session.query(User).filter(User.email==email, User.password==pw).one()
+    #     flash('You were successfully logged in')
+    #     return redirect("/")
+    # else:
+    #     error = 'Invalid credentials'
+            
+    # return render_template('login.html', error=error)
+
+    if user: 
+        if pw == user.password:
+            flash("Successfully logged in!")
+            return redirect("/")
+    
+    flash("Invalid login/password.")
+    return  render_template('login.html')
+
+@app.route("/register", methods=["GET"])
+def registration_form():
+    """Register new user"""
+
+    return render_template("registration.html")
+
 
 
 
