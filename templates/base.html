@@ -6,12 +6,18 @@
 
 <body>
   Ratings
+
+{% if "user_id" in session %}
+    <a href="/logout">Logout</a>
+{% else %}
+    <a href="/login">Login</a>
+{% endif %}
+  
   <hr>
-    <ul>
-      {% for message in get_flashed_messages() %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
+
+{% for flash in get_flashed_messages() %}
+  {{ flash }}
+{% endfor %}
 
 {% block content %} 
     No one will see this

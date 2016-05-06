@@ -31,6 +31,15 @@ def user_list():
     users = User.query.all()
     return render_template("user_list.html", users=users)
 
+@app.route("/user-profile/<int:user_id>")
+def user_profile(user_id):
+    """Shows user profile"""
+
+    user = db.session.query(User).filter(User.user_id==user_id).first()    
+
+    print user
+    return render_template("profile.html", display_profile=user)
+
 @app.route("/login-form", methods=["GET"])
 def login_form():
     """User login"""
@@ -45,12 +54,9 @@ def login_process():
     # error = None
 
     # Returns a single User object querying by email.
-    user = db.session.query(User).filter(User.email==email).one()
+    user = db.session.query(User).filter(User.email==email).first()
 
     # input_email_pw = (request.args.get("inputEmail"), request.args.get("inputPassword"))
-    
-    print "EMAIL", request.form.get("email")
-    print "*************", pw
 
     # if user_email: 
     #     user_pw = db.session.query(User).filter(User.email==email, User.password==pw).one()
@@ -61,13 +67,41 @@ def login_process():
             
     # return render_template('login.html', error=error)
 
-    if user: 
-        if pw == user.password:
-            flash("Successfully logged in!")
-            return redirect("/")
-    
-    flash("Invalid login/password.")
-    return  render_template('login.html')
+##Ask why rows 62-73 didn't work...
+    # session["user_id"] = user.user_id
+
+    # if user: 
+    #     if pw == user.password:
+    #         flash("Successfully logged in!")
+    #         return redirect("/users/%s" % user.user_id)
+    #     else:
+    #         flash("Invalid login/password.")
+    #         return  render_template("login.html")
+    # elif user is None:
+    #     flash("Please sign up for an account")
+    #     return render_template("registration.html")
+
+    if not user:
+        flash("No such user")
+        return redirect("/register")
+
+    if user.password != pw:
+        flash("Incorrect password")
+        return redirect("/login")
+
+    session["user_id"] = user.user_id
+
+    flash("Logged in")
+    return redirect("/users/%s" % user.user_id)
+
+@app.route('/logout')
+def logout():
+    """Log out."""
+
+    del session["user_id"]
+    flash("Logged Out.")
+    return redirect("/")
+
 
 @app.route("/register", methods=["GET"])
 def registration_form():
@@ -76,6 +110,23 @@ def registration_form():
     return render_template("registration.html")
 
 
+@app.route('/register', methods=['POST'])
+def register_process():
+    """Process registration."""
+
+    # Get form variables
+    email = request.form["email"]
+    password = request.form["password"]
+    age = int(request.form["age"])
+    zipcode = request.form["zipcode"]
+
+    new_user = User(email=email, password=password, age=age, zipcode=zipcode)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    flash("User %s added." % email)
+    return redirect("/")
 
 
 if __name__ == "__main__":
